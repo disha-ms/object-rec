@@ -1,0 +1,11 @@
+# Ignore model weights
+*.pt
+
+# Ignore Python virtual environment
+.venv/
+
+# Ignore cache and system files
+__pycache__/
+*.log
+.DS_Store
+Thumbs.db
