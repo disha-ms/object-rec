@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Emergency Alert System Presentation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0d1430 0%, #1a237e 100%);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .presentation-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 700px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            transform: scale(0.95) translateX(50px);
+            background: rgba(13, 20, 48, 0.9);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1) translateX(0);
+            z-index: 10;
+        }
+        
+        .slide-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .slide-title {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00b0ff, #ff6f00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 176, 255, 0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .slide-subtitle {
+            font-size: 1.3rem;
+            color: #e8eaf6;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.3s, transform 0.8s ease 0.3s;
+        }
+        
+        .slide-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease 0.6s, transform 0.8s ease 0.6s;
+        }
+        
+        .slide.active .slide-title,
+        .slide.active .slide-subtitle,
+        .slide.active .slide-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .slide-text {
+            flex: 1;
+            min-width: 300px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slide-visual {
+            flex: 1;
+            min-width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .visual-icon {
+            font-size: 8rem;
+            color: #00b0ff;
+            opacity: 0.7;
+            position: absolute;
+            z-index: 1;
+            transition: transform 0.5s ease, color 0.5s ease;
+        }
+        
+        .visual-graphic {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .circuit {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            border: 2px solid #00b0ff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: pulse 3s infinite alternate;
+        }
+        
+        .circuit:nth-child(2) {
+            width: 60%;
+            height: 60%;
+            border-color: #ff6f00;
+            animation-delay: 0.5s;
+        }
+        
+        .circuit:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            border-color: #1a237e;
+            animation-delay: 1s;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+            margin-top: 20px;
+        }
+        
+        .feature-list li {
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        
+        .slide.active .feature-list li {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .feature-list li:nth-child(1) { transition-delay: 0.8s; }
+        .feature-list li:nth-child(2) { transition-delay: 1.0s; }
+        .feature-list li:nth-child(3) { transition-delay: 1.2s; }
+        .feature-list li:nth-child(4) { transition-delay: 1.4s; }
+        .feature-list li:nth-child(5) { transition-delay: 1.6s; }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #ff6f00;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .tech-item {
+            background: rgba(0, 176, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(0, 176, 255, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .slide.active .tech-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .tech-item:nth-child(1) { transition-delay: 0.8s; }
+        .tech-item:nth-child(2) { transition-delay: 1.0s; }
+        .tech-item:nth-child(3) { transition-delay: 1.2s; }
+        .tech-item:nth-child(4) { transition-delay: 1.4s; }
+        
+        .tech-item:hover {
+            transform: translateY(-5px);
+            background: rgba(0, 176, 255, 0.2);
+        }
+        
+        .tech-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ff6f00;
+        }
+        
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 100;
+        }
+        
+        .nav-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 111, 0, 0.2);
+            border: 2px solid #ff6f00;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 111, 0, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 100;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00b0ff, #ff6f00);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            color: #e8eaf6;
+            z-index: 100;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        .ai-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(0, 176, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(20px);
+            z-index: 0;
+        }
+        
+        .ai-element:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 111, 0, 0.1);
+        }
+        
+        .ai-element:nth-child(2) {
+            top: 60%;
+            right: 5%;
+            width: 150px;
+            height: 150px;
+            background: rgba(26, 35, 126, 0.1);
+        }
+        
+        .ai-element:nth-child(3) {
+            bottom: 10%;
+            left: 20%;
+            width: 80px;
+            height: 80px;
+            background: rgba(0, 176, 255, 0.1);
+        }
+        
+        .click-instruction {
+            position: absolute;
+            bottom: 90px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: #ff6f00;
+            font-size: 1.1rem;
+            animation: bounce 2s infinite;
+            z-index: 100;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        @media (max-width: 768px) {
+            .presentation-container {
+                height: 800px;
+            }
+            
+            .slide-title {
+                font-size: 2rem;
+            }
+            
+            .slide-content {
+                flex-direction: column;
+            }
+            
+            .slide-visual {
+                height: 200px;
+            }
+            
+            .visual-icon {
+                font-size: 5rem;
+            }
+            
+            .nav-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- AI decorative elements -->
+        <div class="ai-element"></div>
+        <div class="ai-element"></div>
+        <div class="ai-element"></div>
+        
+        <!-- Slide 1: Introduction -->
+        <div class="slide active">
+            <div class="slide-counter">1/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">Introduction</h2>
+                <p class="slide-subtitle">A covert emergency alert solution for critical situations</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <p>The Emergency Hidden Alert System is designed for situations where discretion is paramount. It integrates seamlessly into everyday environments while providing robust emergency communication capabilities.</p>
+                    <ul class="feature-list">
+                        <li>Tamper-proof emergency switch concealed within standard electrical switchboard</li>
+                        <li>Instant distress signals via SMS with pre-configured location information</li>
+                        <li>Optional LoRa communication as backup against GSM jamming</li>
+                        <li>No Internet or GPS required</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-eye-slash"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 2: Objectives -->
+        <div class="slide">
+            <div class="slide-counter">2/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">System Objectives</h2>
+                <p class="slide-subtitle">Key goals of the Emergency Alert System</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <ul class="feature-list">
+                        <li>Provide a reliable, hidden panic button that blends into everyday environments</li>
+                        <li>Send immediate SMS notifications with pre-stored location information</li>
+                        <li>Enable flexible contact management through a dedicated mobile application</li>
+                        <li>Implement optional LoRa backup for enhanced robustness in all conditions</li>
+                        <li>Ensure system operation without dependency on Internet or GPS</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-bullseye"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 3: Architecture -->
+        <div class="slide">
+            <div class="slide-counter">3/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">System Architecture</h2>
+                <p class="slide-subtitle">Hardware and software components</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h3>Hardware Components</h3>
+                    <ul class="feature-list">
+                        <li>ESP32 Microcontroller</li>
+                        <li>GSM Module (SIM800L/900A)</li>
+                        <li>Optional LoRa Module</li>
+                        <li>Tamper-proof Panic Button</li>
+                        <li>Power Supply with Battery Backup</li>
+                    </ul>
+                    
+                    <h3>Software Components</h3>
+                    <ul class="feature-list">
+                        <li>Embedded C/C++ (Arduino Framework)</li>
+                        <li>Android App (Java/Kotlin/Flutter)</li>
+                        <li>Bluetooth APIs for Communication</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-sitemap"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 4: Communication Flow -->
+        <div class="slide">
+            <div class="slide-counter">4/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">Communication Flow</h2>
+                <p class="slide-subtitle">How the alert system operates</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <ol class="feature-list">
+                        <li><strong>Trigger:</strong> Panic button is pressed</li>
+                        <li><strong>Primary Alert:</strong> System sends SMS to all configured contacts with location details</li>
+                        <li><strong>Backup Check:</strong> If GSM network is unavailable, system switches to LoRa transmission</li>
+                        <li><strong>Confirmation:</strong> System provides visual feedback that alert was sent</li>
+                        <li><strong>App Sync:</strong> Mobile app synchronizes contacts via Bluetooth when in range</li>
+                    </ol>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-exchange-alt"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 5: Mobile App -->
+        <div class="slide">
+            <div class="slide-counter">5/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">Mobile Application</h2>
+                <p class="slide-subtitle">User interface and functionality</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <h3>Key Features</h3>
+                    <ul class="feature-list">
+                        <li>Simple, intuitive interface for managing emergency contacts</li>
+                        <li>Unlimited contact storage for police, fire, ambulance, and relatives</li>
+                        <li>Bluetooth synchronization with hardware device</li>
+                        <li>Test alert functionality to verify system operation</li>
+                        <li>Settings customization for alert preferences</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-mobile-alt"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 6: Advantages -->
+        <div class="slide">
+            <div class="slide-counter">6/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">System Advantages</h2>
+                <p class="slide-subtitle">Why choose our solution</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-incognito"></i>
+                            <h3>Covert Design</h3>
+                            <p>Hidden and tamper-proof implementation</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-wifi-slash"></i>
+                            <h3>Offline Operation</h3>
+                            <p>No Internet or GPS required</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-paper-plane"></i>
+                            <h3>Multi-contact Alerts</h3>
+                            <p>Instant SMS to multiple recipients</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-redo"></i>
+                            <h3>Redundancy</h3>
+                            <p>Optional LoRa backup</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-star"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 7: Use Cases -->
+        <div class="slide">
+            <div class="slide-counter">7/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">Use Cases</h2>
+                <p class="slide-subtitle">Practical applications of the system</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <div class="tech-grid">
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-home"></i>
+                            <h3>Home Security</h3>
+                            <p>Burglar intrusion scenarios</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-fire"></i>
+                            <h3>Fire Emergency</h3>
+                            <p>Silent alerting of fire services</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-ambulance"></i>
+                            <h3>Medical Emergency</h3>
+                            <p>Quick ambulance requests</p>
+                        </div>
+                        <div class="tech-item">
+                            <i class="tech-icon fas fa-building"></i>
+                            <h3>Community Safety</h3>
+                            <p>Shared system for apartments/offices</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-lightbulb"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click anywhere to continue
+            </div>
+        </div>
+        
+        <!-- Slide 8: Conclusion -->
+        <div class="slide">
+            <div class="slide-counter">8/8</div>
+            <div class="slide-header">
+                <h2 class="slide-title">Conclusion</h2>
+                <p class="slide-subtitle">A robust emergency communication solution</p>
+            </div>
+            <div class="slide-content">
+                <div class="slide-text">
+                    <p>The Emergency Hidden Alert System provides a robust, discreet emergency communication solution with:</p>
+                    <ul class="feature-list">
+                        <li>Primary SMS alerts with optional LoRa backup for maximum reliability</li>
+                        <li>Dynamic app-based contact management</li>
+                        <li>No dependency on Internet or GPS</li>
+                        <li>Scalable architecture for various environments</li>
+                        <li>Innovative approach to personal and community safety</li>
+                    </ul>
+                </div>
+                <div class="slide-visual">
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <div class="circuit"></div>
+                    <i class="visual-icon fas fa-check-circle"></i>
+                </div>
+            </div>
+            <div class="click-instruction">
+                <i class="fas fa-hand-point-right"></i> Click to restart presentation
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn"><i class="fas fa-arrow-left"></i></button>
+            <button class="nav-btn" id="next-btn"><i class="fas fa-arrow-right"></i></button>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const slides = document.querySelectorAll('.slide');
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const progress = document.getElementById('progress');
+            let currentSlide = 0;
+            
+            // Update slides
+            function updateSlide() {
+                slides.forEach((slide, index) => {
+                    if (index === currentSlide) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                });
+                
+                // Update progress bar
+                progress.style.width = ${((currentSlide + 1) / slides.length) * 100}%;
+            }
+            
+            // Next slide
+            function nextSlide() {
+                currentSlide = (currentSlide + 1) % slides.length;
+                updateSlide();
+            }
+            
+            // Previous slide
+            function prevSlide() {
+                currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+                updateSlide();
+            }
+            
+            // Next slide button
+            nextBtn.addEventListener('click', nextSlide);
+            
+            // Previous slide button
+            prevBtn.addEventListener('click', prevSlide);
+            
+            // Click anywhere to advance
+            document.addEventListener('click', function(e) {
+                // Don't advance if clicking on navigation buttons
+                if (!e.target.closest('.nav-btn')) {
+                    nextSlide();
+                }
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                    nextSlide();
+                } else if (e.key === 'ArrowLeft') {
+                    prevSlide();
+                }
+            });
+            
+            // Initialize progress bar
+            progress.style.width = ${((currentSlide + 1) / slides.length) * 100}%;
+        });
+    </script>
+</body>
+</html>
