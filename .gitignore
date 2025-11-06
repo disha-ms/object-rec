@@ -9,3 +9,8 @@ __pycache__/
 *.log
 .DS_Store
 Thumbs.db
+
+# Ignore temporary files
+__pycache__/
+*.pyc
+
